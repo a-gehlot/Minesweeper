@@ -24,6 +24,17 @@ class Board
 
     end
 
+    def populate_numbers
+        (0...9).each do |row|
+            (0...9).each do |cell|
+                if @grid[row][cell].value == "E"
+                    @grid[row][cell].value == self.bomb_count([row, cell])
+                end
+            end
+        end
+    end
+
+
     def num_mines
         @grid.flatten.count { |tile| tile.bomb? }
     end
@@ -41,7 +52,9 @@ class Board
     def render_cheat
         puts "  #{(0..8).to_a.join(" ")}"
         @grid.each_with_index do |row, i|
-            row_val = row.map { |tile| tile.value }
+            row_val = row.map do |tile| 
+                tile.value == "B" ? row_val = tile.value : row_val = tile.num_n_bombs
+            end
             puts "#{i} #{row_val.join(" ")}"
         end
     end
