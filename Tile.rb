@@ -1,10 +1,12 @@
-require_relative "./Board.rb"
+# require_relative "./Board.rb"
 
 class Tile
     attr_reader :value
-    
+    attr_writer :num_n_bombs
+
     def initialize(value)
         @value = value
+        @num_n_bombs = 0
     end
 
     def bomb?
@@ -14,8 +16,6 @@ class Tile
     def flag?
         self.value.include?("F") ? true : false
     end
-
-
 
 
     
