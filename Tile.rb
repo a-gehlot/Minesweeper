@@ -2,7 +2,7 @@
 
 class Tile
     attr_reader :value
-    attr_writer :num_n_bombs
+    attr_accessor :num_n_bombs
 
     def initialize(value)
         @value = value

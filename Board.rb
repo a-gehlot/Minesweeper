@@ -29,11 +29,13 @@ class Board
     end
 
     def [](arr)
-        @grid[arr[0]][arr[1]]
+        i, j = arr
+        @grid[i][j]
     end
     
     def []=(position, value)
-        @grid[position[0]][position[1]] = value
+        i, j = position
+        @grid[i][j] = value
     end
 
     def render_cheat
@@ -59,5 +61,11 @@ class Board
         0 <= i && i <= 8 && 0 <= j && j <= 8
     end
     
+    def bomb_count(point)
+        neighbor_coords(point).each do |neighbor|
+            self[point].num_n_bombs += 1 if self[neighbor].bomb?
+        end
+        self[point].num_n_bombs
+    end
 
 end
