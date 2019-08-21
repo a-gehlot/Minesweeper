@@ -7,6 +7,7 @@ class Tile
     def initialize(value)
         @value = value
         @num_n_bombs = 0
+        @revealed = false
     end
 
     def bomb?
@@ -15,6 +16,10 @@ class Tile
 
     def flag?
         self.value.include?("F") ? true : false
+    end
+
+    def reveal
+        self.revealed = true
     end
 
 
