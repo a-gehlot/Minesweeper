@@ -1,7 +1,7 @@
 # require_relative "./Board.rb"
 
 class Tile
-    attr_reader :value
+    attr_reader :value, :revealed
     attr_accessor :num_n_bombs
 
     def initialize(value)

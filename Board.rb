@@ -53,11 +53,28 @@ class Board
         puts "  #{(0..8).to_a.join(" ")}"
         @grid.each_with_index do |row, i|
             row_val = row.map do |tile| 
-                tile.value == "B" ? row_val = tile.value : row_val = tile.num_n_bombs
+                tile.bomb? ? row_val = tile.value : row_val = tile.num_n_bombs
             end
             puts "#{i} #{row_val.join(" ")}"
         end
     end
+
+    def render_game
+        puts "  #{(0..8).to_a.join(" ")}"
+        @grid.each_with_index do |row, i|
+            row_val = row.map do |tile|
+                if tile.flag?
+                    row_val = "F"
+                elsif tile.revealed
+                    row_val = tile.num_n_bombs
+                else
+                    row_val = "*"
+                end
+            end
+            puts "#{i} #{row_val.join(" ")}"
+        end
+    end
+
 
     def neighbor_coords(point)
         p_i, p_j = point
