@@ -19,7 +19,7 @@ class Tile
     end
 
     def reveal
-        self.revealed = true
+        @revealed = true
     end
 
 

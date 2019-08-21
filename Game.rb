@@ -16,7 +16,7 @@ class Game
     def get_val
         val = nil
         until val && val_valid?(val)
-            puts "enter F for flag or R for reveal"
+            puts "enter F for flag, R for reveal, or U for unflag"
             print "> "
             val = parse_val(gets.chomp)
         end
@@ -38,7 +38,7 @@ class Game
     end
 
     def val_valid?(val)
-        parse_val(val) == "F" || parse_val(val) == "B"
+        parse_val(val) == "F" || parse_val(val) == "R" || parse_val(val) == "U"
     end
 
     def play_turn
@@ -49,7 +49,25 @@ class Game
     end
 
     def determine_value(position, value)
-
+        if @game[position].flag?
+            if value == "U"
+                @game[position].value.chomp("F")
+                @game[position].reveal
+            else
+                puts "must first unflag position"
+            end
+        elsif @game[position].bomb?
+            puts "That was a bomb"
+            return
+        else
+            if value == "F"
+                @game[position].value << "F" unless @game[position].revealed
+            elsif value == "R"
+                @game[position].reveal
+            else
+                puts "can't unflag a non-flagged position"
+            end
+        end
     end
 
 
