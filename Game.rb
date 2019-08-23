@@ -70,6 +70,18 @@ class Game
         end
     end
 
+    def reveal_zeroes(position)
+        neighbors = @game.neighbor_coords(position)
+        adjacent_zeroes = neighbors.select { |coords| (@game[coords].num_n_bombs == 0) && (@game[coords].value != "B") && (!@game[coords].revealed) }
+        return if adjacent_zeroes.empty?
+        adjacent_zeroes.each do |coords|
+            @game[coords].reveal
+            reveal_zeroes(coords)
+        end
+
+        
+    end
+
 
     def start_game
         @game = Board.new
