@@ -66,7 +66,11 @@ class Board
                 if tile.flag?
                     row_val = "F"
                 elsif tile.revealed
-                    row_val = tile.num_n_bombs
+                    if tile.bomb?
+                        row_val == "B"
+                    else
+                        row_val = tile.num_n_bombs
+                    end
                 else
                     row_val = "*"
                 end

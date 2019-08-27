@@ -57,6 +57,7 @@ class Game
                 puts "must first unflag position"
             end
         elsif @game[position].bomb?
+            @game[position].reveal
             puts "That was a bomb"
             return
         else
@@ -64,6 +65,10 @@ class Game
                 @game[position].value << "F" unless @game[position].revealed
             elsif value == "R"
                 @game[position].reveal
+                if @game[position].num_n_bombs == 0
+                    reveal_zeroes(position)
+                    reveal_fringe
+                end
             else
                 puts "can't unflag a non-flagged position"
             end
@@ -78,10 +83,19 @@ class Game
             @game[coords].reveal
             reveal_zeroes(coords)
         end
-
-        
     end
 
+    def reveal_fringe
+        (0..8).each do |row|
+            (0..8).each do |col|
+                if @game[[row, col]].num_n_bombs == 0 && @game[[row, col]].revealed
+                    @game.neighbor_coords([row,col]). each do |coords|
+                        @game[coords].reveal
+                    end
+                end
+            end
+        end
+    end
 
     def start_game
         @game = Board.new
@@ -90,4 +104,33 @@ class Game
         @game.populate_numbers
     end
 
+    def run 
+        self.start_game
+        until game_over?
+            self.play_turn
+        end
+    end
+
+    def lose?
+        @game.grid.flatten.any? { |tile| tile.bomb? && tile.revealed }
+    end
+
+    def win?
+        num_revealed = @game.grid.flatten.count { |tile| tile.revealed }
+        if num_revealed == 71
+            true
+            puts "you won!"
+        else
+            false
+        end
+    end
+
+    def game_over?
+        self.lose? 
+    end
+
+
 end
+
+new_game = Game.new
+new_game.run
