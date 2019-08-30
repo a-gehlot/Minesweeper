@@ -1,4 +1,6 @@
 require_relative "./Board.rb"
+require "Remedy"
+include Remedy
 
 class Game
     attr_reader :game
@@ -42,7 +44,7 @@ class Game
     end
 
     def play_turn
-        @game.render_game
+        self.render_game
         pos = get_position
         val = get_val
         determine_value(pos, val)
@@ -50,8 +52,8 @@ class Game
 
     def determine_value(position, value)
         if @game[position].flag?
-            if value == "U"
-                @game[position].value.chomp("F")
+            if value == "u"
+                @game[position].value.chomp("f")
                 @game[position].reveal
             else
                 puts "must first unflag position"
@@ -61,9 +63,9 @@ class Game
             puts "That was a bomb"
             return
         else
-            if value == "F"
-                @game[position].value << "F" unless @game[position].revealed
-            elsif value == "R"
+            if value == "f"
+                @game[position].value << "f" unless @game[position].revealed
+            elsif value == "r"
                 @game[position].reveal
                 if @game[position].num_n_bombs == 0
                     reveal_zeroes(position)
@@ -71,6 +73,7 @@ class Game
                 end
             else
                 puts "can't unflag a non-flagged position"
+                sleep(3)
             end
         end
     end
@@ -106,9 +109,7 @@ class Game
 
     def run 
         self.start_game
-        until game_over?
-            self.play_turn
-        end
+        self.U_I
     end
 
     def lose?
@@ -129,6 +130,63 @@ class Game
         self.lose? 
     end
 
+    def render_game
+        puts "  #{(0..8).to_a.join(" ")}"
+        @game.grid.each_with_index do |row, i|
+            row_val = row.each_with_index.map do |tile, j|
+                if [i,j] == @cursor
+                    row_val = "\u25C9"
+                elsif tile.flag?
+                    row_val = "F"
+                elsif tile.revealed
+                    if tile.bomb?
+                        row_val == "B"
+                    else
+                        row_val = tile.num_n_bombs
+                    end
+                else
+                    row_val = "*"
+                end
+            end
+            puts "#{i} #{row_val.join(" ")}"
+        end
+    end
+
+    def U_I
+        puts "welcome to minesweeper. Move with wasd. Use f to flag, u to unflag, r to reveal, and q to quit"
+        input = Interaction.new
+        @cursor = [0, 0]
+        until self.game_over?
+            self.render_game
+            input.loop do |key|
+                if key == "w"
+                    up = @cursor[0]
+                    @cursor[0] = up - 1 unless up - 1 < 0
+                elsif key == "a"
+                    left = @cursor[1]
+                    @cursor[1] = left - 1 unless left - 1 < 0
+                elsif key == "s"
+                    down = @cursor[0]
+                    unless down + 1 > 8
+                        @cursor[0] = down + 1
+                    end
+                elsif key == "d"
+                    right = @cursor[1]
+                    unless right + 1 > 8
+                        @cursor[1] = right + 1
+                    end
+                elsif key == "f" || key == "u" || key == "r"
+                    determine_value(@cursor, key)
+                elsif key == "q"
+                    return
+                else
+                    puts "wrong key entered"
+                end
+                system "clear"
+                self.render_game
+            end
+        end
+    end
 
 end
 
